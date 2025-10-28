@@ -1,6 +1,6 @@
 import { Product } from '../types';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = process.env.REACT_APP_API_URL || 'https://auto-parts-server-test.up.railway.app/';
 
 export const fetchProducts = async (brand?: string, search?: string): Promise<Product[]> => {
   const params = new URLSearchParams();
