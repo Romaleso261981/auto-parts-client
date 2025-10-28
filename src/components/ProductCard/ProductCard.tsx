@@ -17,13 +17,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
       aria-label={`View details for ${product.name}`}
     >
       <div className="product-card-image">
-        <img
-          src={`${process.env.PUBLIC_URL}/content_image1.jpg`}
-          alt={product.name}
-          onError={(e) => {
-            (e.currentTarget as HTMLImageElement).src = 'https://via.placeholder.com/400x300/eeeeee/555555?text=No+Image';
-          }}
-        />
+        <img src={product.image} alt={product.name} />
       </div>
       <div className="product-card-info">
         <h3 className="product-card-name">{product.name}</h3>
