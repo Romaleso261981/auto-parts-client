@@ -17,7 +17,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
       aria-label={`View details for ${product.name}`}
     >
       <div className="product-card-image">
-        <img src={product.image} alt={product.name} />
+        <img src={`${process.env.PUBLIC_URL}/content_image1`} alt={product.name} />
       </div>
       <div className="product-card-info">
         <h3 className="product-card-name">{product.name}</h3>

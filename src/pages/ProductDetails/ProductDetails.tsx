@@ -61,7 +61,7 @@ const ProductDetails: React.FC = () => {
       />
       <div className="product-details-container">
         <div className="product-image-section">
-          <img src={product.image} alt={product.name} className="product-image" />
+          <img src={`${process.env.PUBLIC_URL}/content_image1`} alt={product.name} className="product-image" />
         </div>
         
         <div className="product-info-section">
