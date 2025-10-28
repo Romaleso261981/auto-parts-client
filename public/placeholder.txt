@@ -1,0 +1,5 @@
+Для демонстрації використовуємо placeholder зображення.
+Рекомендується використовувати сервіси типу placeholder.com або unsplash.com для зображень.
+
+Приклад URL: https://placeholder.com/300x200
+
