@@ -61,7 +61,14 @@ const ProductDetails: React.FC = () => {
       />
       <div className="product-details-container">
         <div className="product-image-section">
-          <img src={`${process.env.PUBLIC_URL}/content_image1`} alt={product.name} className="product-image" />
+          <img
+            src={`${process.env.PUBLIC_URL}/content_image1.jpg`}
+            alt={product.name}
+            className="product-image"
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).src = 'https://via.placeholder.com/800x600/eeeeee/555555?text=No+Image';
+            }}
+          />
         </div>
         
         <div className="product-info-section">
