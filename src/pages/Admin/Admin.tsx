@@ -134,7 +134,7 @@ const Admin: React.FC = () => {
           <table className="admin-table">
             <thead>
               <tr>
-                <th>ID</th>
+                <th>№</th>
                 <th>Назва</th>
                 <th>Бренд</th>
                 <th>Ціна</th>
@@ -144,9 +144,9 @@ const Admin: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {products.map((product) => (
+              {products.map((product, index) => (
                 <tr key={product.id}>
-                  <td>{product.id}</td>
+                  <td>{index + 1}</td>
                   <td className="product-name">{product.name}</td>
                   <td>{product.brand}</td>
                   <td>{product.price} ₴</td>
