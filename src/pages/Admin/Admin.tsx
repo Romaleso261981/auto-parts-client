@@ -7,6 +7,7 @@ import './Admin.css';
 const Admin: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState<Partial<Product>>({
@@ -113,6 +114,35 @@ const Admin: React.FC = () => {
     }
   };
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const filterProducts = (products: Product[], query: string): Product[] => {
+    if (!query.trim()) {
+      return products;
+    }
+
+    const searchTerm = query.toLowerCase().trim();
+    return products.filter((product) => {
+      const searchableFields = [
+        product.name,
+        product.brand,
+        product.articleNumber,
+        product.code,
+        product.country,
+        product.description,
+        product.price?.toString(),
+        product.originalPrice?.toString(),
+        product.id,
+      ].filter(Boolean).map(field => field?.toLowerCase() || '');
+
+      return searchableFields.some(field => field.includes(searchTerm));
+    });
+  };
+
+  const filteredProducts = filterProducts(products, searchQuery);
+
   return (
     <div className="admin">
       <SEO 
@@ -122,9 +152,29 @@ const Admin: React.FC = () => {
       
       <div className="admin-header">
         <h1 className="admin-title">Адмін панель</h1>
-        <button className="btn btn-primary" onClick={() => handleOpenModal()}>
-          + Додати товар
-        </button>
+        <div className="admin-header-actions">
+          <div className="search-container">
+            <input
+              type="text"
+              placeholder="Пошук по назві, артикулу, бренду, коду..."
+              value={searchQuery}
+              onChange={handleSearchChange}
+              className="admin-search-input"
+            />
+            {searchQuery && (
+              <button
+                className="search-clear"
+                onClick={() => setSearchQuery('')}
+                aria-label="Очистити пошук"
+              >
+                ×
+              </button>
+            )}
+          </div>
+          <button className="btn btn-primary" onClick={() => handleOpenModal()}>
+            + Додати товар
+          </button>
+        </div>
       </div>
 
       {loading ? (
@@ -144,36 +194,44 @@ const Admin: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {products.map((product, index) => (
-                <tr key={product.id}>
-                  <td>{index + 1}</td>
-                  <td className="product-name">{product.name}</td>
-                  <td>{product.brand}</td>
-                  <td>{product.price} ₴</td>
-                  <td>{product.articleNumber || '-'}</td>
-                  <td>
-                    <span className={`badge ${product.inStock ? 'badge-success' : 'badge-danger'}`}>
-                      {product.inStock ? 'Так' : 'Ні'}
-                    </span>
-                  </td>
-                  <td>
-                    <div className="action-buttons">
-                      <button
-                        className="btn btn-edit"
-                        onClick={() => handleOpenModal(product)}
-                      >
-                        Редагувати
-                      </button>
-                      <button
-                        className="btn btn-delete"
-                        onClick={() => handleDelete(product.id)}
-                      >
-                        Видалити
-                      </button>
-                    </div>
+              {filteredProducts.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="no-results-cell">
+                    {searchQuery ? 'Товари не знайдено' : 'Товари відсутні'}
                   </td>
                 </tr>
-              ))}
+              ) : (
+                filteredProducts.map((product, index) => (
+                  <tr key={product.id}>
+                    <td>{index + 1}</td>
+                    <td className="product-name">{product.name}</td>
+                    <td>{product.brand}</td>
+                    <td>{product.price} ₴</td>
+                    <td>{product.articleNumber || '-'}</td>
+                    <td>
+                      <span className={`badge ${product.inStock ? 'badge-success' : 'badge-danger'}`}>
+                        {product.inStock ? 'Так' : 'Ні'}
+                      </span>
+                    </td>
+                    <td>
+                      <div className="action-buttons">
+                        <button
+                          className="btn btn-edit"
+                          onClick={() => handleOpenModal(product)}
+                        >
+                          Редагувати
+                        </button>
+                        <button
+                          className="btn btn-delete"
+                          onClick={() => handleDelete(product.id)}
+                        >
+                          Видалити
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
