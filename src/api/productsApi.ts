@@ -35,3 +35,45 @@ export const fetchBrands = async (): Promise<string[]> => {
   return response.json();
 };
 
+export const createProduct = async (product: Omit<Product, 'id'>): Promise<Product> => {
+  const response = await fetch(`${API_URL}/products`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(product),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to create product');
+  }
+
+  return response.json();
+};
+
+export const updateProduct = async (id: string, product: Partial<Product>): Promise<Product> => {
+  const response = await fetch(`${API_URL}/products/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(product),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to update product');
+  }
+
+  return response.json();
+};
+
+export const deleteProduct = async (id: string): Promise<void> => {
+  const response = await fetch(`${API_URL}/products/${id}`, {
+    method: 'DELETE',
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to delete product');
+  }
+};
+
