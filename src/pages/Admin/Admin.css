@@ -157,6 +157,42 @@
   text-transform: uppercase;
 }
 
+.sortable-header {
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease;
+  position: relative;
+  padding-right: 24px;
+}
+
+.sortable-header:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sort-icon {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.sortable-header:hover .sort-icon {
+  opacity: 1;
+}
+
+.sort-asc {
+  opacity: 1;
+  color: #fff;
+}
+
+.sort-desc {
+  opacity: 1;
+  color: #fff;
+}
+
 .admin-table td {
   padding: 16px;
   border-top: 1px solid #e0e0e0;

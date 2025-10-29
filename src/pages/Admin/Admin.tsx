@@ -8,6 +8,8 @@ const Admin: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [sortField, setSortField] = useState<keyof Product | null>(null);
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState<Partial<Product>>({
@@ -141,7 +143,57 @@ const Admin: React.FC = () => {
     });
   };
 
+  const sortProducts = (products: Product[], field: keyof Product | null, direction: 'asc' | 'desc'): Product[] => {
+    if (!field) return products;
+
+    return [...products].sort((a, b) => {
+      let aValue = a[field];
+      let bValue = b[field];
+
+      // Обробка undefined та null значень
+      if (aValue === undefined || aValue === null) aValue = '';
+      if (bValue === undefined || bValue === null) bValue = '';
+
+      // Перетворення в рядки для порівняння
+      const aStr = String(aValue).toLowerCase();
+      const bStr = String(bValue).toLowerCase();
+
+      // Числове порівняння для ціни та інших числових полів
+      if (field === 'price' || field === 'originalPrice' || field === 'rating' || field === 'reviewCount' || field === 'discount') {
+        const aNum = Number(aValue) || 0;
+        const bNum = Number(bValue) || 0;
+        return direction === 'asc' ? aNum - bNum : bNum - aNum;
+      }
+
+      // Текстове порівняння
+      if (aStr < bStr) return direction === 'asc' ? -1 : 1;
+      if (aStr > bStr) return direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+  };
+
+  const handleSort = (field: keyof Product) => {
+    if (sortField === field) {
+      // Якщо клікнули на ту саму колонку - змінюємо напрямок
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      // Почати сортування по новій колонці
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+
+  const getSortIcon = (field: keyof Product) => {
+    if (sortField !== field) {
+      return <span className="sort-icon">⇅</span>;
+    }
+    return sortDirection === 'asc' ? 
+      <span className="sort-icon sort-asc">↑</span> : 
+      <span className="sort-icon sort-desc">↓</span>;
+  };
+
   const filteredProducts = filterProducts(products, searchQuery);
+  const sortedAndFilteredProducts = sortProducts(filteredProducts, sortField, sortDirection);
 
   return (
     <div className="admin">
@@ -185,23 +237,48 @@ const Admin: React.FC = () => {
             <thead>
               <tr>
                 <th>№</th>
-                <th>Назва</th>
-                <th>Бренд</th>
-                <th>Ціна</th>
-                <th>Артикул</th>
-                <th>В наявності</th>
+                <th 
+                  className="sortable-header" 
+                  onClick={() => handleSort('name')}
+                >
+                  Назва {getSortIcon('name')}
+                </th>
+                <th 
+                  className="sortable-header" 
+                  onClick={() => handleSort('brand')}
+                >
+                  Бренд {getSortIcon('brand')}
+                </th>
+                <th 
+                  className="sortable-header" 
+                  onClick={() => handleSort('price')}
+                >
+                  Ціна {getSortIcon('price')}
+                </th>
+                <th 
+                  className="sortable-header" 
+                  onClick={() => handleSort('articleNumber')}
+                >
+                  Артикул {getSortIcon('articleNumber')}
+                </th>
+                <th 
+                  className="sortable-header" 
+                  onClick={() => handleSort('inStock')}
+                >
+                  В наявності {getSortIcon('inStock')}
+                </th>
                 <th>Дії</th>
               </tr>
             </thead>
             <tbody>
-              {filteredProducts.length === 0 ? (
+              {sortedAndFilteredProducts.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="no-results-cell">
                     {searchQuery ? 'Товари не знайдено' : 'Товари відсутні'}
                   </td>
                 </tr>
               ) : (
-                filteredProducts.map((product, index) => (
+                sortedAndFilteredProducts.map((product, index) => (
                   <tr key={product.id}>
                     <td>{index + 1}</td>
                     <td className="product-name">{product.name}</td>
