@@ -6,13 +6,12 @@ export const fetchProducts = async (brand?: string, search?: string): Promise<Pr
   const params = new URLSearchParams();
   if (brand) params.append('brand', brand);
   if (search) params.append('search', search);
-  
+
   const response = await fetch(`${API_URL}/products?${params.toString()}`);
-  
+
   if (!response.ok) {
     throw new Error('Failed to fetch products');
   }
-  
   return response.json();
 };
 
